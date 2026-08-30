@@ -207,26 +207,43 @@ body {
 .action-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+  gap: 8px;
 }
 
 .action-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 7px 9px;
+  padding: 9px 10px;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   text-align: left;
   transition: all 0.15s ease-in-out;
+  min-width: 0;
 }
 
 .action-card:hover {
   background: var(--card-hover);
   border-color: rgba(255, 161, 22, 0.5);
   transform: translateY(-1px);
+}
+
+.action-card:focus-visible,
+.icon-btn:focus-visible,
+.send-btn:focus-visible,
+.link-btn:focus-visible,
+.model-picker select:focus-visible,
+.chat-input-wrapper input:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
 }
 
 .action-icon {
@@ -263,7 +280,7 @@ body {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   overflow-y: auto;
   position: relative;
   display: flex;
@@ -326,6 +343,7 @@ body {
   font-size: 12.5px;
   color: var(--text-main);
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 /* Loading State */
