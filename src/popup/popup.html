@@ -19,7 +19,15 @@
     <main class="content">
       <div class="card">
         <h2>AI Key Setup</h2>
-        <p class="description">Enter your OpenRouter key or Google AI Studio key (starts with AQ... / AIza...)</p>
+        <p class="description">Choose a provider. Ollama runs locally at localhost:11434.</p>
+
+        <div class="form-group">
+          <label for="providerSelect">AI Provider</label>
+          <select id="providerSelect">
+            <option value="auto">Cloud (detect from key)</option>
+            <option value="ollama">Ollama (local)</option>
+          </select>
+        </div>
         
         <div class="form-group">
           <label for="apiKey">API Key</label>
@@ -55,6 +63,11 @@
         <div class="form-group hidden" id="customModelGroup">
           <label for="customModelInput">Custom Model Identifier</label>
           <input type="text" id="customModelInput" placeholder="e.g. gemini-3.6-flash or deepseek/deepseek-r1">
+        </div>
+
+        <div class="form-group hidden" id="ollamaModelGroup">
+          <label for="ollamaModelInput">Ollama Model</label>
+          <input type="text" id="ollamaModelInput" placeholder="qwen3">
         </div>
 
         <button id="saveBtn" class="btn btn-primary">Save Settings</button>

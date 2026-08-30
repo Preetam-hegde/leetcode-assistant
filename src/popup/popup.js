@@ -2,26 +2,32 @@
  * Popup JS - Settings Manager with Auto Key Detection
  */
 
-import { isGoogleStudioKeyOrModel } from '../utils/openrouter.js';
+import { isGoogleStudioKeyOrModel, OLLAMA_DEFAULT_MODEL } from '../utils/openrouter.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const apiKeyInput = document.getElementById('apiKey');
+  const providerSelect = document.getElementById('providerSelect');
   const toggleApiKeyBtn = document.getElementById('toggleApiKey');
   const keyProviderBadge = document.getElementById('keyProviderBadge');
   const modelSelect = document.getElementById('modelSelect');
   const customModelGroup = document.getElementById('customModelGroup');
   const customModelInput = document.getElementById('customModelInput');
+  const ollamaModelGroup = document.getElementById('ollamaModelGroup');
+  const ollamaModelInput = document.getElementById('ollamaModelInput');
   const saveBtn = document.getElementById('saveBtn');
   const statusMessage = document.getElementById('statusMessage');
   const openSidePanelBtn = document.getElementById('openSidePanelBtn');
 
   // Load existing settings
-  const settings = await chrome.storage.sync.get(['openrouter_api_key', 'selected_model', 'custom_model']);
+  const settings = await chrome.storage.sync.get(['openrouter_api_key', 'selected_model', 'custom_model', 'provider', 'ollama_model']);
+  providerSelect.value = settings.provider || 'auto';
+  ollamaModelInput.value = settings.ollama_model || OLLAMA_DEFAULT_MODEL;
 
   if (settings.openrouter_api_key) {
     apiKeyInput.value = settings.openrouter_api_key;
     updateKeyBadge(settings.openrouter_api_key);
   }
+  updateProviderUi();
 
   const model = settings.selected_model || 'deepseek/deepseek-r1';
   const knownOptions = Array.from(modelSelect.querySelectorAll('option')).map(o => o.value);
@@ -65,6 +71,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  providerSelect.addEventListener('change', updateProviderUi);
+
+  function updateProviderUi() {
+    const local = providerSelect.value === 'ollama';
+    apiKeyInput.closest('.form-group').classList.toggle('hidden', local);
+    ollamaModelGroup.classList.toggle('hidden', !local);
+  }
+
   toggleApiKeyBtn.addEventListener('click', () => {
     if (apiKeyInput.type === 'password') {
       apiKeyInput.type = 'text';
@@ -76,11 +90,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   saveBtn.addEventListener('click', async () => {
+    const provider = providerSelect.value;
     const apiKey = apiKeyInput.value.trim();
     let selectedModel = modelSelect.value;
     let customModel = customModelInput.value.trim();
 
-    if (selectedModel === 'custom') {
+    if (provider !== 'ollama' && selectedModel === 'custom') {
       if (!customModel) {
         showStatus('Please specify a custom model ID.', 'error');
         return;
@@ -88,10 +103,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       selectedModel = customModel;
     }
 
+    if (provider !== 'ollama' && !apiKey) {
+      showStatus('Enter a cloud API key or choose Ollama (local).', 'error');
+      return;
+    }
     await chrome.storage.sync.set({
       openrouter_api_key: apiKey,
       selected_model: selectedModel,
-      custom_model: customModel
+      custom_model: customModel,
+      provider,
+      ollama_model: ollamaModelInput.value.trim() || OLLAMA_DEFAULT_MODEL
     });
 
     showStatus('Settings saved successfully! ✅', 'success');

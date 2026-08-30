@@ -2,7 +2,7 @@
  * Side Panel JS - Interactive LeetSensei Workspace
  */
 
-import { sendOpenRouterRequest, DEFAULT_MODEL } from '../utils/openrouter.js';
+import { sendOpenRouterRequest, DEFAULT_MODEL, OLLAMA_DEFAULT_MODEL } from '../utils/openrouter.js';
 import { renderMarkdown } from '../utils/markdown.js';
 import {
   SYSTEM_PROMPT,
@@ -37,17 +37,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   let activeProblem = null;
   let apiKey = '';
   let selectedModel = DEFAULT_MODEL;
+  let provider = 'auto';
 
   await loadSettings();
   await loadActiveProblem();
   setupEventListeners();
 
   async function loadSettings() {
-    const settings = await chrome.storage.sync.get(['openrouter_api_key', 'selected_model']);
+    const settings = await chrome.storage.sync.get(['openrouter_api_key', 'selected_model', 'provider', 'ollama_model']);
     apiKey = settings.openrouter_api_key || '';
-    selectedModel = settings.selected_model || DEFAULT_MODEL;
+    selectedModel = settings.provider === 'ollama' ? (settings.ollama_model || OLLAMA_DEFAULT_MODEL) : (settings.selected_model || DEFAULT_MODEL);
+    provider = settings.provider || 'auto';
 
-    if (!apiKey) apiKeyNotice.classList.remove('hidden');
+    if (!apiKey && provider !== 'ollama') apiKeyNotice.classList.remove('hidden');
     else apiKeyNotice.classList.add('hidden');
 
     if (selectedModel) spModelSelect.value = selectedModel;
@@ -88,7 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setupEventListeners() {
     spModelSelect.addEventListener('change', async () => {
       selectedModel = spModelSelect.value;
-      await chrome.storage.sync.set({ selected_model: selectedModel });
+      await chrome.storage.sync.set(provider === 'ollama'
+        ? { ollama_model: selectedModel }
+        : { selected_model: selectedModel });
     });
 
     refreshProblemBtn.addEventListener('click', async () => {
@@ -135,6 +139,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           selectedModel = changes.selected_model.newValue;
           spModelSelect.value = selectedModel;
         }
+        if (changes.provider) provider = changes.provider.newValue;
+        if (changes.ollama_model && provider === 'ollama') {
+          selectedModel = changes.ollama_model.newValue;
+          spModelSelect.value = selectedModel;
+        }
       }
     });
 
@@ -154,7 +163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function handleAiAction(actionType) {
-    if (!apiKey) {
+    if (!apiKey && provider !== 'ollama') {
       alert('Please set your OpenRouter API Key in settings first!');
       return;
     }
@@ -206,7 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const query = chatInput.value.trim();
     if (!query) return;
 
-    if (!apiKey) {
+    if (!apiKey && provider !== 'ollama') {
       alert('Please set your OpenRouter API Key in settings first!');
       return;
     }
@@ -236,6 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await sendOpenRouterRequest({
         apiKey,
         model: selectedModel,
+        provider,
         messages,
         onChunk: (chunk, fullText) => {
           loadingIndicator.classList.add('hidden');

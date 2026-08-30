@@ -3,6 +3,7 @@
  */
 
 export const DEFAULT_MODEL = 'deepseek/deepseek-r1';
+export const OLLAMA_DEFAULT_MODEL = 'qwen3';
 
 /**
  * Detects whether key or model belongs to Google AI Studio
@@ -26,10 +27,14 @@ export function isGoogleStudioKeyOrModel(apiKey = '', model = '') {
 export async function sendOpenRouterRequest({
   apiKey,
   model = DEFAULT_MODEL,
+  provider = 'auto',
   messages,
   temperature = 0.2,
   onChunk = null
 }) {
+  if (provider === 'ollama') {
+    return sendOllamaRequest({ model, messages, temperature, onChunk });
+  }
   if (!apiKey || !apiKey.trim()) {
     throw new Error('API Key is missing. Please set your API Key in extension settings.');
   }
@@ -41,6 +46,24 @@ export async function sendOpenRouterRequest({
   } else {
     return sendOpenRouterDirect({ apiKey, model, messages, temperature, onChunk });
   }
+}
+
+async function sendOllamaRequest({ model, messages, temperature, onChunk }) {
+  const response = await fetch('http://localhost:11434/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: model || OLLAMA_DEFAULT_MODEL,
+      messages,
+      stream: false,
+      options: { temperature }
+    })
+  });
+  if (!response.ok) throw new Error(`Ollama HTTP ${response.status}`);
+  const data = await response.json();
+  const text = data.message?.content || '';
+  if (onChunk && text) onChunk(text, text);
+  return text;
 }
 
 /**
