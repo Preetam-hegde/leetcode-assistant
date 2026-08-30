@@ -2,6 +2,6 @@
 *.zip
 *.crx
 node_modules/
+.worktrees/
 .env
 .env.*
-
