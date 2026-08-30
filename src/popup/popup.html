@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetSensei - Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="header">
+      <div class="logo">
+        <span class="icon">🥋</span>
+        <h1>LeetSensei</h1>
+      </div>
+      <span class="badge">AI LeetCode Mentor</span>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <h2>AI Key Setup</h2>
+        <p class="description">Enter your OpenRouter key or Google AI Studio key (starts with AQ... / AIza...)</p>
+        
+        <div class="form-group">
+          <label for="apiKey">API Key</label>
+          <div class="input-wrapper">
+            <input type="password" id="apiKey" placeholder="OpenRouter or Google Studio key (AQ...)" autocomplete="off">
+            <button id="toggleApiKey" type="button" title="Toggle visibility">👁️</button>
+          </div>
+          <small class="help-text" id="keyProviderBadge">OpenRouter or Google AI Studio key detected automatically</small>
+        </div>
+
+        <div class="form-group">
+          <label for="modelSelect">Default AI Model</label>
+          <select id="modelSelect">
+            <optgroup label="Google AI Studio (AQ... / AIza... Key)">
+              <option value="gemini-3.6-flash">Gemini 3.6 Flash (Recommended Google Studio)</option>
+              <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+              <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
+              <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+            </optgroup>
+            <optgroup label="OpenRouter Key">
+              <option value="deepseek/deepseek-r1">DeepSeek R1 (Recommended OpenRouter)</option>
+              <option value="deepseek/deepseek-chat">DeepSeek V3</option>
+              <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+              <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+              <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+              <option value="qwen/qwen-2.5-coder-32b-instruct">Qwen 2.5 Coder</option>
+            </optgroup>
+            <option value="custom">Custom Model ID...</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="customModelGroup">
+          <label for="customModelInput">Custom Model Identifier</label>
+          <input type="text" id="customModelInput" placeholder="e.g. gemini-3.6-flash or deepseek/deepseek-r1">
+        </div>
+
+        <button id="saveBtn" class="btn btn-primary">Save Settings</button>
+        <div id="statusMessage" class="status-msg"></div>
+      </div>
+
+      <div class="card open-panel-card">
+        <button id="openSidePanelBtn" class="btn btn-secondary">
+          <span>🚀</span> Open Side Panel
+        </button>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>LeetSensei v1.0.0 • OpenRouter & Google Studio</span>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

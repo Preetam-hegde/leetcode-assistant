@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetSensei - AI LeetCode Mentor</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="brand">
+        <span class="icon">🥋</span>
+        <div class="brand-info">
+          <h1>LeetSensei</h1>
+          <span class="subtext">AI LeetCode Mentor</span>
+        </div>
+      </div>
+      <div class="model-picker">
+        <select id="spModelSelect" title="Select AI Model">
+          <optgroup label="Google AI Studio (AQ... Key)">
+            <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+            <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+            <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
+            <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+          </optgroup>
+          <optgroup label="OpenRouter">
+            <option value="deepseek/deepseek-r1">DeepSeek R1</option>
+            <option value="deepseek/deepseek-chat">DeepSeek V3</option>
+            <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+            <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+            <option value="qwen/qwen-2.5-coder-32b-instruct">Qwen 2.5 Coder</option>
+          </optgroup>
+        </select>
+      </div>
+    </header>
+
+    <!-- Active Problem Banner -->
+    <section class="problem-card" id="problemCard">
+      <div class="problem-header">
+        <div class="problem-title-wrapper">
+          <span id="problemDifficulty" class="diff-tag diff-unknown">--</span>
+          <h2 id="problemTitle">Detecting Active Problem...</h2>
+        </div>
+        <button id="refreshProblemBtn" class="icon-btn" title="Refresh Problem Info">🔄</button>
+      </div>
+      <div class="problem-topics" id="problemTopics"></div>
+    </section>
+
+    <!-- API Key Notice Banner if missing -->
+    <div id="apiKeyNotice" class="notice-banner hidden">
+      <span>⚠️ API Key missing (OpenRouter or Google Studio AQ...).</span>
+      <button id="openSettingsBtn" class="link-btn">Settings</button>
+    </div>
+
+    <!-- Action Buttons Grid -->
+    <section class="actions-section">
+      <div class="action-grid">
+        <button class="action-card" data-action="best_solution">
+          <span class="action-icon">🐍</span>
+          <div class="action-text">
+            <span class="action-title">Optimal Python Code</span>
+            <span class="action-desc">Best code & Big-O complexity</span>
+          </div>
+        </button>
+
+        <button class="action-card" data-action="reframe_description">
+          <span class="action-icon">📝</span>
+          <div class="action-text">
+            <span class="action-title">Simplify Question</span>
+            <span class="action-desc">Clear 30-second summary</span>
+          </div>
+        </button>
+
+        <button class="action-card" data-action="best_method">
+          <span class="action-icon">🎯</span>
+          <div class="action-text">
+            <span class="action-title">Best Method & Pattern</span>
+            <span class="action-desc">How to deduce the pattern</span>
+          </div>
+        </button>
+
+        <button class="action-card" data-action="hints">
+          <span class="action-icon">💡</span>
+          <div class="action-text">
+            <span class="action-title">Progressive Hints</span>
+            <span class="action-desc">3-stage quick intuition</span>
+          </div>
+        </button>
+
+        <button class="action-card" data-action="step_explanation">
+          <span class="action-icon">📖</span>
+          <div class="action-text">
+            <span class="action-title">Step-by-Step Logic</span>
+            <span class="action-desc">Algorithm & quick dry run</span>
+          </div>
+        </button>
+
+        <button class="action-card" data-action="review_code">
+          <span class="action-icon">🔍</span>
+          <div class="action-text">
+            <span class="action-title">Review & Debug Code</span>
+            <span class="action-desc">Find bugs in your code</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Response Display Area -->
+    <main class="output-container" id="outputContainer">
+      <div class="welcome-placeholder" id="welcomePlaceholder">
+        <div class="placeholder-icon">💡</div>
+        <h3>Select an AI action above</h3>
+        <p>Pick any option or ask a question to get concise, optimal solution guidance from LeetSensei.</p>
+      </div>
+
+      <div class="response-wrapper hidden" id="responseWrapper">
+        <div class="response-header">
+          <span id="responseActionTitle" class="response-title">Action Output</span>
+          <button id="clearOutputBtn" class="icon-btn" title="Clear Response">🧹</button>
+        </div>
+        <div class="response-body" id="responseBody"></div>
+      </div>
+
+      <div id="loadingIndicator" class="loading-state hidden">
+        <div class="spinner"></div>
+        <span id="loadingText">Thinking...</span>
+      </div>
+    </main>
+
+    <!-- Bottom Interactive Chat Bar -->
+    <footer class="chat-bar">
+      <div class="chat-input-wrapper">
+        <input type="text" id="chatInput" placeholder="Ask LeetSensei about this problem..." autocomplete="off">
+        <button id="sendChatBtn" class="send-btn" title="Send Question">➔</button>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
